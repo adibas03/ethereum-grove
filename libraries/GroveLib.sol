@@ -79,7 +79,7 @@ library GroveLib {
         /// @param index The index that the node is part of.
         /// @param id The id for the node to be looked up.
         function getPreviousNode(Index storage index, bytes32 id) constant returns (bytes32) {
-            Node storage currentNode = index.nodes[id];
+            Node memory currentNode = index.nodes[id];
 
             if (currentNode.id == 0x0) {
                 // Unknown node, just return 0x0;
@@ -102,7 +102,7 @@ library GroveLib {
                 // Now we trace back up through parent relationships, looking
                 // for a link where the child is the right child of it's
                 // parent.
-                Node storage parent = index.nodes[currentNode.parent];
+                Node memory parent = index.nodes[currentNode.parent];
                 child = currentNode;
 
                 while (true) {
@@ -126,7 +126,7 @@ library GroveLib {
         /// @param index The index that the node is part of.
         /// @param id The id for the node to be looked up.
         function getNextNode(Index storage index, bytes32 id) constant returns (bytes32) {
-            Node storage currentNode = index.nodes[id];
+            Node memory currentNode = index.nodes[id];
 
             if (currentNode.id == 0x0) {
                 // Unknown node, just return 0x0;
@@ -148,7 +148,7 @@ library GroveLib {
             if (currentNode.parent != 0x0) {
                 // if the node is the left child of it's parent, then the
                 // parent is the next one.
-                Node storage parent = index.nodes[currentNode.parent];
+                Node memory parent = index.nodes[currentNode.parent];
                 child = currentNode;
 
                 while (true) {
@@ -163,7 +163,7 @@ library GroveLib {
                     parent = index.nodes[parent.parent];
                 }
 
-                // Now we need to trace all the way up checking to see if any parent is the 
+                // Now we need to trace all the way up checking to see if any parent is the
             }
 
             // This is the final node.
@@ -186,15 +186,15 @@ library GroveLib {
                     remove(index, id);
                 }
 
-                uint leftHeight;
-                uint rightHeight;
+               // uint leftHeight;
+                //uint rightHeight;
 
                 bytes32 previousNodeId = 0x0;
 
                 if (index.root == 0x0) {
                     index.root = id;
                 }
-                Node storage currentNode = index.nodes[index.root];
+                Node memory currentNode = index.nodes[index.root];
 
                 // Do insertion
                 while (true) {
@@ -240,12 +240,12 @@ library GroveLib {
         /// @param index The index that should be removed
         /// @param id The unique identifier of the data element to remove.
         function remove(Index storage index, bytes32 id) public {
-            Node storage replacementNode;
-            Node storage parent;
-            Node storage child;
+            Node memory replacementNode;
+            Node memory parent;
+            Node memory child;
             bytes32 rebalanceOrigin;
 
-            Node storage nodeToDelete = index.nodes[id];
+            Node memory nodeToDelete = index.nodes[id];
 
             if (nodeToDelete.id != id) {
                 // The id does not exist in the tree.
@@ -416,7 +416,7 @@ library GroveLib {
          */
         function query(Index storage index, bytes2 operator, int value) public returns (bytes32) {
                 bytes32 rootNodeId = index.root;
-                
+
                 if (rootNodeId == 0x0) {
                     // Empty tree.
                     return 0x0;
@@ -500,7 +500,7 @@ library GroveLib {
         function _rebalanceTree(Index storage index, bytes32 id) internal {
             // Trace back up rebalancing the tree and updating heights as
             // needed..
-            Node storage currentNode = index.nodes[id];
+            Node memory currentNode = index.nodes[id];
 
             while (true) {
                 int balanceFactor = _getBalanceFactor(index, currentNode.id);
@@ -542,7 +542,7 @@ library GroveLib {
         }
 
         function _getBalanceFactor(Index storage index, bytes32 id) internal returns (int) {
-                Node storage node = index.nodes[id];
+                Node memory node = index.nodes[id];
 
                 return int(index.nodes[node.left].height) - int(index.nodes[node.right].height);
         }
@@ -554,7 +554,7 @@ library GroveLib {
         }
 
         function _rotateLeft(Index storage index, bytes32 id) internal {
-            Node storage originalRoot = index.nodes[id];
+            Node memory originalRoot = index.nodes[id];
 
             if (originalRoot.right == 0x0) {
                 // Cannot rotate left if there is no right originalRoot to rotate into
@@ -564,7 +564,7 @@ library GroveLib {
 
             // The right child is the new root, so it gets the original
             // `originalRoot.parent` as it's parent.
-            Node storage newRoot = index.nodes[originalRoot.right];
+            Node memory newRoot = index.nodes[originalRoot.right];
             newRoot.parent = originalRoot.parent;
 
             // The original root needs to have it's right child nulled out.
@@ -573,7 +573,7 @@ library GroveLib {
             if (originalRoot.parent != 0x0) {
                 // If there is a parent node, it needs to now point downward at
                 // the newRoot which is rotating into the place where `node` was.
-                Node storage parent = index.nodes[originalRoot.parent];
+                Node memory parent = index.nodes[originalRoot.parent];
 
                 // figure out if we're a left or right child and have the
                 // parent point to the new node.
@@ -589,7 +589,7 @@ library GroveLib {
             if (newRoot.left != 0) {
                 // If the new root had a left child, that moves to be the
                 // new right child of the original root node
-                Node storage leftChild = index.nodes[newRoot.left];
+                Node memory leftChild = index.nodes[newRoot.left];
                 originalRoot.right = leftChild.id;
                 leftChild.parent = originalRoot.id;
             }
