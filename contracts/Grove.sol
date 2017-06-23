@@ -1,5 +1,7 @@
 // Grove v0.3
-import "libraries/GroveLib.sol";
+pragma solidity ^ 0.4.10;
+
+import "../libraries/GroveLib.sol";
 
 
 /// @title Grove - queryable indexes for ordered data.

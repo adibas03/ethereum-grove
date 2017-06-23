@@ -1,5 +1,5 @@
 // Grove v0.3
-
+pragma solidity ^ 0.4.10;
 
 /// @title GroveLib - Library for queriable indexed ordered data.
 /// @author PiperMerriam - <pipermerriam@gmail.com>
